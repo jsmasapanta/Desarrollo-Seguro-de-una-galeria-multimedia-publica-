@@ -2,6 +2,8 @@ import multer from "multer";
 import path from "path";
 import conexion from "../config/db.js";
 import { analizarImagen } from "../services/stegoService.js";
+import sharp from "sharp";
+import fs from "fs";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,9 +33,17 @@ export const subirImagen = async (req, res) => {
     }
 
     const rutaArchivo = req.file.path;
+    const rutaLimpia =
+    "src/uploads/clean-" + req.file.filename;
+
+    await sharp(rutaArchivo)
+    .jpeg({ quality: 100 })
+    .toFile(rutaLimpia);
+
+    //fs.unlinkSync(rutaArchivo);
 
     const analisis = await analizarImagen(
-      rutaArchivo
+       rutaLimpia
     );
 
     const [resultado] = await conexion.query(
