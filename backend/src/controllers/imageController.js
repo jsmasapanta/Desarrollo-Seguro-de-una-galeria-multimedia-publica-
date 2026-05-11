@@ -162,3 +162,29 @@ export const rechazarImagen = async (req, res) => {
     });
   }
 };
+
+
+export const obtenerImagenesPublicas = async (req, res) => {
+  try {
+    const [imagenes] = await conexion.query(
+      `SELECT 
+        i.id,
+        i.nombre_archivo,
+        i.ruta_archivo,
+        i.estado,
+        i.album_id,
+        a.titulo AS album
+      FROM imagenes i
+      INNER JOIN albumes a ON i.album_id = a.id
+      WHERE i.estado = 'limpio'
+      AND a.estado = 'aprobado'`
+    );
+
+    res.json(imagenes);
+  } catch (error) {
+    res.status(500).json({
+      mensaje: "Error al obtener imágenes públicas",
+      error: error.message
+    });
+  }
+};

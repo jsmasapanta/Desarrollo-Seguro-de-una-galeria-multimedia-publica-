@@ -5,7 +5,8 @@ import {
   upload,
   obtenerCuarentena,
   aprobarImagen,
-  rechazarImagen
+  rechazarImagen,
+  obtenerImagenesPublicas
 } from "../controllers/imageController.js";
 
 import {
@@ -14,6 +15,12 @@ import {
 } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
+
+router.get(
+  "/publicas",
+  obtenerImagenesPublicas
+);
+
 
 router.post(
   "/subir",

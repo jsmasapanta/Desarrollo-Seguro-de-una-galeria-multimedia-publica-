@@ -9,6 +9,8 @@ import userRoutes from "./routes/userRoutes.js";
 import albumRoutes from "./routes/albumRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import twofaRoutes from "./routes/twofaRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -48,12 +50,29 @@ app.use(
 );
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("src/uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/album", albumRoutes);
 app.use("/api/image", imageRoutes);
 app.use("/api/2fa", twofaRoutes);
+
+
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
+
+
+
+
+
+
+
 
 
 
