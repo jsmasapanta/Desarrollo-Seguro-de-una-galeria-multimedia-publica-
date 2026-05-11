@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import albumRoutes from "./routes/albumRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
+import twofaRoutes from "./routes/twofaRoutes.js";
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/album", albumRoutes);
 app.use("/api/image", imageRoutes);
-
+app.use("/api/2fa", twofaRoutes);
 
 
 

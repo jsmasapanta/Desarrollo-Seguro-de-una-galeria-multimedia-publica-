@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import conexion from "../config/db.js";
 import jwt from "jsonwebtoken";
+import speakeasy from "speakeasy";
 
 export const registrarUsuario = async (req, res) => {
   try {
@@ -43,11 +44,11 @@ export const registrarUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
   try {
-    const { correo, password } = req.body;
+    const { correo, password, codigo2FA } = req.body;
 
     if (!correo || !password) {
       return res.status(400).json({
-        mensaje: "Todos los campos son obligatorios"
+        mensaje: "Correo y contraseña son obligatorios"
       });
     }
 
@@ -75,6 +76,27 @@ export const loginUsuario = async (req, res) => {
       });
     }
 
+    if (usuario.twofa_enabled) {
+      if (!codigo2FA) {
+        return res.status(401).json({
+          mensaje: "Código 2FA requerido"
+        });
+      }
+
+      const codigoValido = speakeasy.totp.verify({
+        secret: usuario.twofa_secret,
+        encoding: "base32",
+        token: codigo2FA,
+        window: 1
+      });
+
+      if (!codigoValido) {
+        return res.status(401).json({
+          mensaje: "Código 2FA inválido"
+        });
+      }
+    }
+
     const token = jwt.sign(
       {
         id: usuario.id,
@@ -93,7 +115,8 @@ export const loginUsuario = async (req, res) => {
         id: usuario.id,
         nombre: usuario.nombre,
         correo: usuario.correo,
-        rol: usuario.rol
+        rol: usuario.rol,
+        twofa_enabled: usuario.twofa_enabled
       }
     });
   } catch (error) {
