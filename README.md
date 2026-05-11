@@ -12,42 +12,41 @@ El proyecto implementa múltiples controles de seguridad orientados a proteger e
 
 ## Seguridad de Autenticación
 
-* Registro seguro de usuarios.
-* Contraseñas protegidas mediante hashing con bcrypt.
-* Login protegido con JWT.
-* Doble factor de autenticación (2FA) mediante códigos TOTP.
-* Protección contra fuerza bruta mediante Rate Limiting.
+- Registro seguro de usuarios.
+- Contraseñas protegidas mediante hashing con bcrypt.
+- Login protegido con JWT.
+- Doble factor de autenticación (2FA) mediante códigos TOTP.
+- Protección contra fuerza bruta mediante Rate Limiting.
 
 ## Seguridad de Acceso
 
-* Control de acceso basado en roles (RBAC).
-* Roles:
-
-  * Usuario
-  * Administrador
-* Protección de rutas privadas.
-* Middleware de verificación JWT.
+- Control de acceso basado en roles (RBAC).
+- Roles:
+  - Usuario
+  - Administrador
+- Protección de rutas privadas.
+- Middleware de verificación JWT.
 
 ## Seguridad Multimedia
 
-* Subida segura de imágenes.
-* Validación MIME real.
-* Sanitización multimedia.
-* Eliminación de metadatos EXIF.
-* Reescritura segura de imágenes con Sharp.
-* Detección de payloads ocultos.
-* Detección de archivos ZIP renombrados como imágenes.
-* Cuarentena automática de imágenes sospechosas.
-* Revisión manual por administrador.
+- Subida segura de imágenes.
+- Validación MIME real.
+- Sanitización multimedia.
+- Eliminación de metadatos EXIF.
+- Reescritura segura de imágenes con Sharp.
+- Detección de payloads ocultos.
+- Detección de archivos ZIP renombrados como imágenes.
+- Cuarentena automática de imágenes sospechosas.
+- Revisión manual por administrador.
 
 ## Seguridad Web
 
-* Helmet.
-* Content Security Policy (CSP).
-* Protección contra XSS.
-* Protección contra Clickjacking.
-* Validaciones de entrada.
-* Restricción de recursos externos.
+- Helmet.
+- Content Security Policy (CSP).
+- Protección contra XSS.
+- Protección contra Clickjacking.
+- Validaciones de entrada.
+- Restricción de recursos externos.
 
 ---
 
@@ -57,25 +56,25 @@ El proyecto implementa múltiples controles de seguridad orientados a proteger e
 
 Tecnologías:
 
-* Node.js
-* Express.js
-* MySQL
-* JWT
-* bcrypt
-* Multer
-* Sharp
-* Speakeasy
-* Helmet
+- Node.js
+- Express.js
+- MySQL
+- JWT
+- bcrypt
+- Multer
+- Sharp
+- Speakeasy
+- Helmet
 
 ## Frontend
 
 Tecnologías:
 
-* React
-* Vite
-* Tailwind CSS
-* Axios
-* React Router DOM
+- React
+- Vite
+- Tailwind CSS
+- Axios
+- React Router DOM
 
 ---
 
@@ -108,7 +107,10 @@ secureframe-gallery/
 │   ├── package.json
 │   └── vite.config.js
 │
-└── README.md
+├── screenshots/
+│
+├── README.md
+└── .gitignore
 ```
 
 ---
@@ -141,19 +143,19 @@ secureframe-gallery/
 
 # Controles de Seguridad Implementados
 
-| Control                 | Implementación           |
-| ----------------------- | ------------------------ |
-| Hashing de contraseñas  | bcrypt                   |
-| Autenticación           | JWT                      |
-| 2FA                     | TOTP con Speakeasy       |
-| Protección fuerza bruta | express-rate-limit       |
-| CSP                     | Helmet                   |
-| RBAC                    | Middleware personalizado |
-| Validación MIME         | file-type                |
-| Sanitización imágenes   | Sharp                    |
-| Detección payload ZIP   | Análisis hexadecimal     |
-| Cuarentena              | Base de datos MySQL      |
-| Gestión administrativa  | Panel React              |
+| Control | Implementación |
+|---|---|
+| Hashing de contraseñas | bcrypt |
+| Autenticación | JWT |
+| 2FA | TOTP con Speakeasy |
+| Protección fuerza bruta | express-rate-limit |
+| CSP | Helmet |
+| RBAC | Middleware personalizado |
+| Validación MIME | file-type |
+| Sanitización imágenes | Sharp |
+| Detección payload ZIP | Análisis hexadecimal |
+| Cuarentena | Base de datos MySQL |
+| Gestión administrativa | Panel React |
 
 ---
 
@@ -161,10 +163,10 @@ secureframe-gallery/
 
 ## Requisitos
 
-* Node.js
-* MySQL
-* npm
-* Git
+- Node.js
+- MySQL
+- npm
+- Git
 
 ---
 
@@ -251,10 +253,10 @@ USE secureframe_gallery;
 
 Tablas:
 
-* usuarios
-* albumes
-* imagenes
-* cuarentena
+- usuarios
+- albumes
+- imagenes
+- cuarentena
 
 ---
 
@@ -262,50 +264,123 @@ Tablas:
 
 ## Autenticación
 
-| Método | Endpoint           |
-| ------ | ------------------ |
-| POST   | /api/auth/registro |
-| POST   | /api/auth/login    |
+| Método | Endpoint |
+|---|---|
+| POST | /api/auth/registro |
+| POST | /api/auth/login |
 
 ## 2FA
 
-| Método | Endpoint         |
-| ------ | ---------------- |
-| GET    | /api/2fa/generar |
-| POST   | /api/2fa/activar |
+| Método | Endpoint |
+|---|---|
+| GET | /api/2fa/generar |
+| POST | /api/2fa/activar |
 
 ## Álbumes
 
-| Método | Endpoint               |
-| ------ | ---------------------- |
-| POST   | /api/album/crear       |
-| GET    | /api/album/pendientes  |
-| PUT    | /api/album/aprobar/:id |
-| GET    | /api/album/publicos    |
+| Método | Endpoint |
+|---|---|
+| POST | /api/album/crear |
+| GET | /api/album/pendientes |
+| PUT | /api/album/aprobar/:id |
+| GET | /api/album/publicos |
 
 ## Imágenes
 
-| Método | Endpoint                |
-| ------ | ----------------------- |
-| POST   | /api/image/subir        |
-| GET    | /api/image/cuarentena   |
-| PUT    | /api/image/aprobar/:id  |
-| PUT    | /api/image/rechazar/:id |
-| GET    | /api/image/publicas     |
+| Método | Endpoint |
+|---|---|
+| POST | /api/image/subir |
+| GET | /api/image/cuarentena |
+| PUT | /api/image/aprobar/:id |
+| PUT | /api/image/rechazar/:id |
+| GET | /api/image/publicas |
 
 ---
 
-# Evidencias de Seguridad
+# Credenciales de Prueba
 
-El sistema fue probado exitosamente en:
+## Usuario Administrador
 
-* Detección de archivos ZIP ocultos.
-* Bloqueo de archivos sospechosos.
-* Cuarentena automática.
-* Login protegido con 2FA.
-* Restricción de acceso mediante roles.
-* Protección CSP.
-* Sanitización multimedia.
+Correo:
+
+```text
+jeff@test.com
+```
+
+Contraseña:
+
+```text
+123456
+```
+
+Requiere código 2FA generado mediante TOTP.
+
+---
+
+## Usuario Normal
+
+Correo:
+
+```text
+usuario@test.com
+```
+
+Contraseña:
+
+```text
+123456
+```
+
+Nota: las contraseñas no se almacenan en texto plano. El sistema utiliza bcrypt para guardar únicamente el hash seguro.
+
+---
+
+# Justificación Técnica de Detección de Esteganografía
+
+El sistema implementa un mecanismo de análisis preventivo para detectar imágenes potencialmente manipuladas mediante técnicas de esteganografía o inserción de datos ocultos.
+
+El método utilizado combina:
+
+- Validación MIME real del archivo.
+- Revisión de extensión permitida.
+- Análisis hexadecimal del contenido.
+- Detección de firma ZIP `504b0304`.
+- Sanitización de imagen con Sharp.
+- Reescritura segura del archivo.
+- Eliminación de metadatos EXIF.
+- Cuarentena automática ante resultados sospechosos.
+
+Este enfoque permite detectar casos comunes donde un atacante renombra archivos comprimidos o payloads como imágenes `.jpg` o `.png`, intentando evadir controles superficiales basados solo en extensión.
+
+Si el archivo presenta indicadores sospechosos, no se publica directamente en la galería. En su lugar, pasa a cuarentena para revisión manual del administrador.
+
+---
+
+# Evidencias del Sistema
+
+## Login Seguro
+
+![Login](screenshots/login.png)
+
+## Registro Seguro
+
+![Register](screenshots/register.png)
+
+## Dashboard del Usuario
+
+![Dashboard](screenshots/dashboard.png)
+
+## Panel Administrador
+
+![Admin](screenshots/admin.png)
+
+## Detección de Imagen Sospechosa
+
+![Cuarentena](screenshots/cuarentena.png)
+
+## Galería Pública
+
+![Gallery](screenshots/gallery.png)
 
 ---
 
@@ -323,21 +398,21 @@ Posible archivo comprimido oculto
 
 El sistema:
 
-* Detectó el payload.
-* Clasificó el archivo como sospechoso.
-* Lo envió automáticamente a cuarentena.
+- Detectó el payload.
+- Clasificó el archivo como sospechoso.
+- Lo envió automáticamente a cuarentena.
 
 ---
 
 # Principios SSDLC Aplicados
 
-* Seguridad desde el diseño.
-* Validación de entradas.
-* Principio de mínimo privilegio.
-* Defensa en profundidad.
-* Hardening multimedia.
-* Seguridad en autenticación.
-* Gestión segura de contenido generado por usuarios.
+- Seguridad desde el diseño.
+- Validación de entradas.
+- Principio de mínimo privilegio.
+- Defensa en profundidad.
+- Hardening multimedia.
+- Seguridad en autenticación.
+- Gestión segura de contenido generado por usuarios.
 
 ---
 
@@ -345,19 +420,18 @@ El sistema:
 
 El proyecto toma como referencia:
 
-* OWASP Top 10
-* OWASP ASVS
-* NIST SP 800-218
-* NIST SP 800-63
-* Secure SDLC
-* Principios Zero Trust
+- OWASP Top 10
+- OWASP ASVS
+- NIST SP 800-218
+- NIST SP 800-63
+- Secure SDLC
+- Principios Zero Trust
 
 ---
 
-# Autores
-Wilmer Buestan
-Jefferson Masapanta
+# Autor
 
+Jefferson Masapanta y Wilmer Buestan
 
 Carrera de Ingeniería de Software
 
