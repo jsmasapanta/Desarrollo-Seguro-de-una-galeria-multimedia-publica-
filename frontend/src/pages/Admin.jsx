@@ -5,6 +5,7 @@ import api from "../services/api";
 function Admin() {
   const [albumes, setAlbumes] = useState([]);
   const [cuarentena, setCuarentena] = useState([]);
+  const [imagenesSubidas, setImagenesSubidas] = useState([]);
   const [mensaje, setMensaje] = useState("");
 
   const token = localStorage.getItem("token");
@@ -16,8 +17,8 @@ function Admin() {
 
   const cargarAlbumes = async () => {
     try {
-      const respuesta = await api.get("/album/pendientes", { headers });
-      setAlbumes(respuesta.data);
+      const res = await api.get("/album/pendientes", { headers });
+      setAlbumes(res.data);
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al cargar álbumes");
     }
@@ -25,18 +26,28 @@ function Admin() {
 
   const cargarCuarentena = async () => {
     try {
-      const respuesta = await api.get("/image/cuarentena", { headers });
-      setCuarentena(respuesta.data);
+      const res = await api.get("/image/cuarentena", { headers });
+      setCuarentena(res.data);
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al cargar cuarentena");
     }
   };
 
+  const cargarImagenesSubidas = async () => {
+    try {
+      const res = await api.get("/image/admin/todas", { headers });
+      setImagenesSubidas(res.data);
+    } catch (error) {
+      setMensaje(error.response?.data?.mensaje || "Error al cargar imágenes subidas");
+    }
+  };
+
   const aprobarAlbum = async (id) => {
     try {
-      const respuesta = await api.put(`/album/aprobar/${id}`, {}, { headers });
-      setMensaje(respuesta.data.mensaje);
+      const res = await api.put(`/album/aprobar/${id}`, {}, { headers });
+      setMensaje(res.data.mensaje);
       cargarAlbumes();
+      cargarImagenesSubidas();
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al aprobar álbum");
     }
@@ -44,9 +55,10 @@ function Admin() {
 
   const aprobarImagen = async (id) => {
     try {
-      const respuesta = await api.put(`/image/aprobar/${id}`, {}, { headers });
-      setMensaje(respuesta.data.mensaje);
+      const res = await api.put(`/image/aprobar/${id}`, {}, { headers });
+      setMensaje(res.data.mensaje);
       cargarCuarentena();
+      cargarImagenesSubidas();
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al aprobar imagen");
     }
@@ -54,17 +66,30 @@ function Admin() {
 
   const rechazarImagen = async (id) => {
     try {
-      const respuesta = await api.put(`/image/rechazar/${id}`, {}, { headers });
-      setMensaje(respuesta.data.mensaje);
+      const res = await api.put(`/image/rechazar/${id}`, {}, { headers });
+      setMensaje(res.data.mensaje);
       cargarCuarentena();
+      cargarImagenesSubidas();
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al rechazar imagen");
+    }
+  };
+
+  const eliminarImagen = async (id) => {
+    try {
+      const res = await api.delete(`/image/admin/${id}`, { headers });
+      setMensaje(res.data.mensaje);
+      cargarImagenesSubidas();
+      cargarCuarentena();
+    } catch (error) {
+      setMensaje(error.response?.data?.mensaje || "Error al eliminar imagen");
     }
   };
 
   useEffect(() => {
     cargarAlbumes();
     cargarCuarentena();
+    cargarImagenesSubidas();
   }, []);
 
   return (
@@ -73,14 +98,12 @@ function Admin() {
         <div>
           <h1 className="text-2xl font-bold">Panel Administrador</h1>
           <p className="text-sm text-slate-300">
-            Supervisión de álbumes e imágenes sospechosas
+            Supervisión de álbumes, imágenes subidas y cuarentena
           </p>
         </div>
 
         <div className="flex gap-4 items-center">
-          <span className="text-sm">
-            {usuario?.nombre || "Administrador"}
-          </span>
+          <span className="text-sm">{usuario?.nombre || "Administrador"}</span>
 
           <Link
             to="/dashboard"
@@ -121,9 +144,9 @@ function Admin() {
           </div>
 
           <div className="bg-white p-6 rounded-2xl shadow">
-            <p className="text-gray-500 text-sm">Controles activos</p>
+            <p className="text-gray-500 text-sm">Imágenes subidas</p>
             <h2 className="text-4xl font-bold text-green-600">
-              8
+              {imagenesSubidas.length}
             </h2>
           </div>
         </div>
@@ -134,9 +157,7 @@ function Admin() {
           </h2>
 
           {albumes.length === 0 ? (
-            <p className="text-gray-500">
-              No hay álbumes pendientes.
-            </p>
+            <p className="text-gray-500">No hay álbumes pendientes.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {albumes.map((album) => (
@@ -154,9 +175,7 @@ function Admin() {
                     </span>
                   </div>
 
-                  <p className="text-gray-600 mb-2">
-                    {album.descripcion}
-                  </p>
+                  <p className="text-gray-600 mb-2">{album.descripcion}</p>
 
                   <p className="text-sm text-gray-500 mb-4">
                     Privacidad: {album.privacidad}
@@ -174,15 +193,17 @@ function Admin() {
           )}
         </section>
 
-        <section className="bg-white p-8 rounded-2xl shadow">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+        <section className="bg-white p-8 rounded-2xl shadow mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
             Imágenes en cuarentena
           </h2>
 
+          <p className="text-gray-500 mb-6">
+            Archivos sospechosos detectados por el sistema y pendientes de revisión administrativa.
+          </p>
+
           {cuarentena.length === 0 ? (
-            <p className="text-gray-500">
-              No hay imágenes sospechosas.
-            </p>
+            <p className="text-gray-500">No hay imágenes sospechosas.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {cuarentena.map((img) => (
@@ -208,8 +229,12 @@ function Admin() {
                     <strong>Motivo:</strong> {img.motivo}
                   </p>
 
-                  <p className="text-sm text-gray-500 mb-4">
-                    Álbum ID: {img.album_id}
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Álbum:</strong> {img.album || "Sin álbum"}
+                  </p>
+
+                  <p className="text-sm text-gray-700 mb-4">
+                    <strong>Subido por:</strong> {img.usuario || "Usuario no identificado"}
                   </p>
 
                   <div className="flex gap-3">
@@ -226,7 +251,66 @@ function Admin() {
                     >
                       Rechazar
                     </button>
+
+                    <button
+                      onClick={() => eliminarImagen(img.id)}
+                      className="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-semibold transition"
+                    >
+                      Eliminar
+                    </button>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="bg-white p-8 rounded-2xl shadow">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Imágenes subidas
+          </h2>
+
+          <p className="text-gray-500 mb-6">
+            Registro general de imágenes cargadas al sistema para control administrativo.
+          </p>
+
+          {imagenesSubidas.length === 0 ? (
+            <p className="text-gray-500">No hay imágenes registradas.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {imagenesSubidas.map((img) => (
+                <div
+                  key={img.id}
+                  className="border border-gray-200 rounded-xl p-5 bg-gray-50"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-lg font-bold text-gray-800">
+                      {img.nombre_archivo}
+                    </h3>
+
+                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                      {img.estado}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Álbum:</strong> {img.album || "Sin álbum"}
+                  </p>
+
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Subido por:</strong> {img.usuario || "Usuario no identificado"}
+                  </p>
+
+                  <p className="text-sm text-gray-700 mb-4">
+                    <strong>Resultado:</strong> {img.resultado_analisis}
+                  </p>
+
+                  <button
+                    onClick={() => eliminarImagen(img.id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition"
+                  >
+                    Eliminar imagen
+                  </button>
                 </div>
               ))}
             </div>

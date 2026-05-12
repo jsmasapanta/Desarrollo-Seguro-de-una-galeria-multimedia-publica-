@@ -10,7 +10,13 @@ function Dashboard() {
   const [imagen, setImagen] = useState(null);
   const [mensajeAlbum, setMensajeAlbum] = useState("");
   const [mensajeImagen, setMensajeImagen] = useState("");
+  const [albumes, setAlbumes] = useState([]);
+  const cargarAlbumes = async () => {
+  const res = await api.get("/album/publicos");
+          setAlbumes(res.data);
+        };
 
+        cargarAlbumes();
   const token = localStorage.getItem("token");
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
@@ -149,13 +155,19 @@ function Dashboard() {
           </h2>
 
           <form onSubmit={subirImagen} className="flex flex-col gap-4">
-            <input
-              type="number"
-              placeholder="ID del álbum aprobado"
+            <select
               value={albumId}
               onChange={(e) => setAlbumId(e.target.value)}
               className="border border-gray-300 p-3 rounded-lg outline-none focus:border-blue-500"
-            />
+            >
+              <option value="">Seleccione un álbum</option>
+
+              {albumes.map((album) => (
+                <option key={album.id} value={album.id}>
+                  {album.titulo}
+                </option>
+              ))}
+            </select>
 
             <input
               type="file"

@@ -1,9 +1,11 @@
 import express from "express";
 
 import {
-  subirImagen,
   upload,
+  subirImagen,
   obtenerCuarentena,
+  obtenerImagenesAdmin,
+  eliminarImagenAdmin,
   aprobarImagen,
   rechazarImagen,
   obtenerImagenesPublicas
@@ -21,7 +23,6 @@ router.get(
   obtenerImagenesPublicas
 );
 
-
 router.post(
   "/subir",
   verificarToken,
@@ -34,6 +35,20 @@ router.get(
   verificarToken,
   verificarAdmin,
   obtenerCuarentena
+);
+
+router.get(
+  "/admin/todas",
+  verificarToken,
+  verificarAdmin,
+  obtenerImagenesAdmin
+);
+
+router.delete(
+  "/admin/:id",
+  verificarToken,
+  verificarAdmin,
+  eliminarImagenAdmin
 );
 
 router.put(

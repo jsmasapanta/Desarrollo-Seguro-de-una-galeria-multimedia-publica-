@@ -19,7 +19,7 @@ function Gallery() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-100">
       <nav className="bg-blue-700 text-white px-8 py-5 flex justify-between items-center shadow">
         <div>
           <h1 className="text-3xl font-bold">SecureFrame Gallery</h1>
@@ -29,20 +29,27 @@ function Gallery() {
         </div>
 
         <div className="flex gap-4">
-          <Link
-            to="/login"
-            className="bg-white text-blue-700 px-4 py-2 rounded-lg font-semibold"
-          >
-            Iniciar sesión
-          </Link>
+        <Link
+          to="/login"
+          className="bg-white text-blue-700 px-4 py-2 rounded-lg font-semibold"
+        >
+          Usuario
+        </Link>
 
-          <Link
-            to="/register"
-            className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold"
-          >
-            Registrarse
-          </Link>
-        </div>
+        <Link
+          to="/admin-login"
+          className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg font-semibold"
+        >
+          Administrador
+        </Link>
+
+        <Link
+          to="/register"
+          className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold"
+        >
+          Registrarse
+        </Link>
+      </div>
       </nav>
 
       <header className="max-w-7xl mx-auto px-8 py-10">

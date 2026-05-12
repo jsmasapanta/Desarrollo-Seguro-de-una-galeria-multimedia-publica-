@@ -33,18 +33,22 @@ export const subirImagen = async (req, res) => {
     }
 
     const rutaArchivo = req.file.path;
-    const rutaLimpia =
-    "src/uploads/clean-" + req.file.filename;
+    const rutaLimpia = "src/uploads/clean-" + req.file.filename;
 
-    await sharp(rutaArchivo)
-    .jpeg({ quality: 100 })
-    .toFile(rutaLimpia);
+    let analisis;
 
-    //fs.unlinkSync(rutaArchivo);
+    try {
+      await sharp(rutaArchivo)
+        .jpeg({ quality: 100 })
+        .toFile(rutaLimpia);
 
-    const analisis = await analizarImagen(
-       rutaLimpia
-    );
+      analisis = await analizarImagen(rutaLimpia);
+    } catch (error) {
+      analisis = {
+        estado: "sospechoso",
+        resultado: "Archivo inválido o manipulado. No pudo ser procesado como imagen real."
+      };
+    }
 
     const [resultado] = await conexion.query(
       `INSERT INTO imagenes
@@ -88,21 +92,25 @@ export const subirImagen = async (req, res) => {
 
 export const obtenerCuarentena = async (req, res) => {
   try {
-    const [imagenes] = await conexion.query(
-      `SELECT 
-        i.id,
-        i.nombre_archivo,
-        i.ruta_archivo,
-        i.estado,
-        i.resultado_analisis,
-        i.album_id,
-        i.usuario_id,
-        c.motivo,
-        c.fecha_revision
-      FROM imagenes i
-      INNER JOIN cuarentena c ON i.id = c.imagen_id
-      WHERE i.estado = 'sospechoso'`
-    );
+      const [imagenes] = await conexion.query(
+    `SELECT 
+      i.id,
+      i.nombre_archivo,
+      i.ruta_archivo,
+      i.estado,
+      i.resultado_analisis,
+      i.album_id,
+      i.usuario_id,
+      a.titulo AS album,
+      u.nombre AS usuario,
+      c.motivo,
+      c.fecha_revision
+    FROM imagenes i
+    INNER JOIN cuarentena c ON i.id = c.imagen_id
+    LEFT JOIN albumes a ON i.album_id = a.id
+    LEFT JOIN usuarios u ON i.usuario_id = u.id
+    WHERE i.estado = 'sospechoso'`
+  );
 
     res.json(imagenes);
   } catch (error) {
@@ -112,6 +120,61 @@ export const obtenerCuarentena = async (req, res) => {
     });
   }
 };
+
+export const obtenerImagenesAdmin = async (req, res) => {
+  try {
+    const [imagenes] = await conexion.query(
+      `SELECT 
+        i.id,
+        i.nombre_archivo,
+        i.ruta_archivo,
+        i.estado,
+        i.resultado_analisis,
+        i.album_id,
+        i.usuario_id,
+        a.titulo AS album,
+        u.nombre AS usuario,
+        i.fecha_subida
+      FROM imagenes i
+      LEFT JOIN albumes a ON i.album_id = a.id
+      LEFT JOIN usuarios u ON i.usuario_id = u.id
+      ORDER BY i.fecha_subida DESC`
+    );
+
+    res.json(imagenes);
+  } catch (error) {
+    res.status(500).json({
+      mensaje: "Error al obtener imágenes",
+      error: error.message
+    });
+  }
+};
+
+export const eliminarImagenAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await conexion.query(
+      "DELETE FROM cuarentena WHERE imagen_id = ?",
+      [id]
+    );
+
+    await conexion.query(
+      "DELETE FROM imagenes WHERE id = ?",
+      [id]
+    );
+
+    res.json({
+      mensaje: "Imagen eliminada correctamente"
+    });
+  } catch (error) {
+    res.status(500).json({
+      mensaje: "Error al eliminar imagen",
+      error: error.message
+    });
+  }
+};
+
 
 export const aprobarImagen = async (req, res) => {
   try {
