@@ -133,6 +133,7 @@ export const obtenerImagenesAdmin = async (req, res) => {
         i.album_id,
         i.usuario_id,
         a.titulo AS album,
+        a.privacidad AS privacidad,
         u.nombre AS usuario,
         i.fecha_subida
       FROM imagenes i
@@ -240,7 +241,8 @@ export const obtenerImagenesPublicas = async (req, res) => {
       FROM imagenes i
       INNER JOIN albumes a ON i.album_id = a.id
       WHERE i.estado = 'limpio'
-      AND a.estado = 'aprobado'`
+      AND a.estado = 'aprobado'
+      AND a.privacidad = 'publico'`
     );
 
     res.json(imagenes);

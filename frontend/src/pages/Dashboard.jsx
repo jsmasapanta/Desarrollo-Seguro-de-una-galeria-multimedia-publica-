@@ -12,11 +12,16 @@ function Dashboard() {
   const [mensajeImagen, setMensajeImagen] = useState("");
   const [albumes, setAlbumes] = useState([]);
   const cargarAlbumes = async () => {
-  const res = await api.get("/album/publicos");
-          setAlbumes(res.data);
-        };
+  const res = await api.get("/album/mis-albumes", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  });
 
-        cargarAlbumes();
+  setAlbumes(res.data);
+};
+
+cargarAlbumes();
   const token = localStorage.getItem("token");
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
